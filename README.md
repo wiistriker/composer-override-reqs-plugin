@@ -1,12 +1,154 @@
-# Для чего это?
+# Composer Override Reqs Plugin
 
-Иногда composer пакеты имеют версии зависимостей, которые по тем или иным причинам не могут быть использованы в проекте.
-Например, какой-то пакет имеет зависимость `"some/package-name": "^1.0 || ^2.4`, но нам надо использовать именно версию `2.0`.
-Если есть уверенность, что данный пакет может быть использован, несмотря на то, что поддержка версии `2.0` не заявлена в require блоке, то есть несколько вариантов:
+[Русская версия](#русская-версия) | [English version](#english-version)
 
-- использовать require с префиксом `as`, например `"some/package-name": "2.0.0 as 2.4.0"`
-- форкнуть репозиторий, внести правки и добавить его в composer.json через repositories (https://getcomposer.org/doc/05-repositories.md)
+---
 
-Делать форк не всегда удобно и сложно поддерживать, поэтому и был реализован этот простейший плагин.
+## Русская версия
 
-Если вашу задачу можно решить стандартными средствами composer, то лучше воспользоваться ими, так как данный плагин использует рефлексию (так как нет официального API для подмены версий зависимостей)
+### Для чего этот плагин?
+
+Иногда при работе с Composer возникает проблема: некоторые пакеты имеют слишком жёсткие ограничения по версиям зависимостей.  
+Например, пакет [`dama/doctrine-test-bundle:6.7.5`](https://packagist.org/packages/dama/doctrine-test-bundle#v6.7.5) требует:
+
+```json
+"symfony/cache": "^4.4 || ^5.3 || ^6.0",
+"symfony/framework-bundle": "^4.4 || ^5.3 || ^6.0"
+```
+
+Это означает, что пакет можно установить только вместе с Symfony `4.4`, `5.3` или `6.0`.  
+Однако на практике часто бывает так, что пакет вполне работает и с промежуточными версиями, например Symfony `5.0–5.2`.
+
+### Как можно обойти ограничение?
+
+Существуют стандартные варианты, но у них есть недостатки:
+
+- **Использовать `as` в require**  
+  Например:
+  ```json
+  "symfony/cache": "5.0.11 as 5.3.14"
+  ```  
+  Минус: нужно указывать точные версии вручную.
+
+- **Форкнуть репозиторий**  
+  Внести правки и подключить его через [repositories](https://getcomposer.org/doc/05-repositories.md).  
+  Минус: придётся поддерживать собственный форк.
+
+Если по каким-то причинам эти методы вам (как и мне), не подошли, то можно попробовать данный плагин. Минус у данного плагина в том, что
+он использует Reflection, поэтому не гарантируется работа при выходе новых версий composer.
+
+---
+
+### Установка и настройка
+
+Установите плагин:
+
+```bash
+composer require --dev wiistriker/composer-override-reqs-plugin
+```
+
+Добавьте в `composer.json` секцию `extra.requirements-override.override`:
+
+```json
+{
+    "require": {
+        "symfony/cache": "5.0.*",
+        "dama/doctrine-test-bundle": "*"
+    },
+    "extra": {
+        "requirements-override": {
+            "override": {
+                "dama/doctrine-test-bundle": {
+                    "6.7.5": {
+                        "symfony/cache": "^4.4 || ^5.0 || ^6.0",
+                        "symfony/framework-bundle": "^4.4 || ^5.0 || ^6.0"
+                    }
+                }
+            }
+        }
+    }
+}
+```
+
+После этого запустите:
+
+```bash
+composer update
+```
+
+Теперь `dama/doctrine-test-bundle` установится и на Symfony `5.0`, так как зависимости были переопределены.
+
+---
+
+## English version
+
+### What is this plugin for?
+
+Sometimes Composer packages come with overly strict dependency constraints.  
+For example, [`dama/doctrine-test-bundle:6.7.5`](https://packagist.org/packages/dama/doctrine-test-bundle#v6.7.5) requires:
+
+```json
+"symfony/cache": "^4.4 || ^5.3 || ^6.0"
+```
+
+This means the bundle can only be installed with Symfony `4.4`, `5.3`, or `6.0`.  
+But in reality, it would also work just fine with Symfony `5.0–5.2`.
+
+### How can we bypass this?
+
+Typical workarounds exist, but each has drawbacks:
+
+- **Use `as` in require**  
+  Example:
+  ```json
+  "symfony/cache": "5.0.11 as 5.3.14"
+  ```  
+  Drawback: you must specify exact versions manually.
+
+- **Fork the repository**  
+  Modify the dependency constraints and include it via [repositories](https://getcomposer.org/doc/05-repositories.md).  
+  Drawback: you need to maintain your own fork.
+
+If, for some reason, these methods (just like for me) didn’t work for you, you can try this plugin instead.  
+The downside of this plugin is that it relies on Reflection, so compatibility with future Composer releases is not guaranteed.
+
+---
+
+### Installation & Usage
+
+Install the plugin:
+
+```bash
+composer require --dev wiistriker/composer-override-reqs-plugin
+```
+
+Then add the `extra.requirements-override.override` section in your `composer.json`:
+
+```json
+{
+    "require": {
+        "symfony/cache": "5.0.*",
+        "dama/doctrine-test-bundle": "*"
+    },
+    "extra": {
+        "requirements-override": {
+            "override": {
+                "dama/doctrine-test-bundle": {
+                    "6.7.5": {
+                        "symfony/cache": "^4.4 || ^5.0 || ^6.0",
+                        "symfony/framework-bundle": "^4.4 || ^5.0 || ^6.0"
+                    }
+                }
+            }
+        }
+    }
+}
+```
+
+Finally, run:
+
+```bash
+composer update
+```
+
+Now `dama/doctrine-test-bundle` will install even with Symfony `5.0`, since the dependency constraints were overridden.
