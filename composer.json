@@ -2,6 +2,7 @@
     "name": "wiistriker/composer-override-reqs-plugin",
     "description": "Plugin to override composer package requirements",
     "type": "composer-plugin",
+    "license": "MIT",
     "require": {
         "composer-plugin-api": "^2.0"
     },

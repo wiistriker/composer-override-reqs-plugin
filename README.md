@@ -1,5 +1,11 @@
 # Composer Override Reqs Plugin
 
+[![Latest Stable Version](https://poser.pugx.org/wiistriker/composer-override-reqs-plugin/v)](//packagist.org/packages/wiistriker/composer-override-reqs-plugin)
+[![Latest Unstable Version](http://poser.pugx.org/wiistriker/composer-override-reqs-plugin/v/unstable)](https://packagist.org/packages/wiistriker/composer-override-reqs-plugin)
+[![Total Downloads](https://poser.pugx.org/wiistriker/composer-override-reqs-plugin/downloads)](//packagist.org/packages/wiistriker/composer-override-reqs-plugin)
+[![License](http://poser.pugx.org/wiistriker/composer-override-reqs-plugin/license)](https://packagist.org/packages/wiistriker/composer-override-reqs-plugin)
+
+
 [Русская версия](#русская-версия) | [English version](#english-version)
 
 ---
