@@ -1,0 +1,16 @@
+{
+    "name": "wiistriker/composer-override-reqs-plugin",
+    "description": "Plugin to override composer package requirements",
+    "type": "composer-plugin",
+    "require": {
+        "composer-plugin-api": "^2.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Wiistriker\\": "src/"
+        }
+    },
+    "extra": {
+        "class": "Wiistriker\\OverridePlugin"
+    }
+}
